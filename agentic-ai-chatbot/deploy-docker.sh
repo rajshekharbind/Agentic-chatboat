@@ -1,0 +1,31 @@
+#!/bin/bash
+# Docker deployment script
+
+echo "🐳 Building Docker image..."
+docker build -t langgraph-chatbot:latest .
+
+echo ""
+echo "📋 Docker Commands Reference:"
+echo ""
+echo "🔹 Local Testing:"
+echo "   docker-compose up -d"
+echo "   Visit: http://localhost:5000"
+echo ""
+echo "🔹 Docker Hub:"
+echo "   docker tag langgraph-chatbot:latest YOUR_DOCKERHUB_USERNAME/langgraph-chatbot:latest"
+echo "   docker login"
+echo "   docker push YOUR_DOCKERHUB_USERNAME/langgraph-chatbot:latest"
+echo ""
+echo "🔹 AWS ECR:"
+echo "   aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin YOUR_AWS_ID.dkr.ecr.us-east-1.amazonaws.com"
+echo "   docker tag langgraph-chatbot:latest YOUR_AWS_ID.dkr.ecr.us-east-1.amazonaws.com/langgraph-chatbot:latest"
+echo "   docker push YOUR_AWS_ID.dkr.ecr.us-east-1.amazonaws.com/langgraph-chatbot:latest"
+echo ""
+echo "🔹 Google Cloud Run:"
+echo "   gcloud auth configure-docker"
+echo "   docker tag langgraph-chatbot:latest gcr.io/YOUR_PROJECT_ID/langgraph-chatbot:latest"
+echo "   docker push gcr.io/YOUR_PROJECT_ID/langgraph-chatbot:latest"
+echo "   gcloud run deploy langgraph-chatbot --image gcr.io/YOUR_PROJECT_ID/langgraph-chatbot:latest --platform managed --region us-central1"
+echo ""
+echo "✅ Image built successfully!"
+echo ""

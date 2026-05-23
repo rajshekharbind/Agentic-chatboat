@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  chatbot:
+    build: .
+    container_name: langgraph-chatbot
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - FLASK_DEBUG=0
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - SECRET_KEY=${SECRET_KEY:-your-secret-key-change-in-production}
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./backend/app/data:/app/backend/app/data
+      - ./frontend/data:/app/frontend/data
+      - ./frontend/static:/app/frontend/static
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - chatbot-network
+    labels:
+      - "com.example.description=LangGraph PDF Chatbot"
+
+networks:
+  chatbot-network:
+    driver: bridge

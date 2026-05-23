@@ -1,0 +1,46 @@
+# ============================================
+# LangGraph Chatbot Dependencies
+# ============================================
+
+# Core Framework (tested compatible versions)
+langgraph>=0.1.0
+langchain>=0.1.0
+langchain-core>=0.1.0
+langchain-community>=0.1.0
+
+# LLM Integration
+langchain-google-genai>=2.0.0
+google-generativeai>=0.3.0
+
+# Vector Database & Document Processing
+faiss-cpu
+pypdf
+
+# Tools & Utilities
+python-dotenv
+aiohttp
+pydantic
+requests
+duckduckgo-search
+ddgs
+
+# Web Framework - Flask (for HTML/Tailwind frontend)
+flask>=2.3.0
+flask-cors>=4.0.0
+
+# Streamlit (optional - legacy UI)
+streamlit>=1.28.0
+streamlit-chat
+
+# Database
+langchain-openai>=0.0.1
+aiosqlite
+langchain-mcp-adapters
+
+# Optional: For better async support
+greenlet
+
+# Development/Testing (optional)
+pytest
+black
+pylint
