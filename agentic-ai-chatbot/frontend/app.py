@@ -98,10 +98,23 @@ def status():
 @app.route('/api/chat', methods=['POST'])
 def chat():
     """Submit a message and get AI response."""
+    print("=" * 60)
+    print("📥 CHAT ENDPOINT CALLED")
+    print("=" * 60)
+    
     try:
         data = request.get_json()
+        print(f"✅ Request data: {data}")
+        
+        if not data:
+            print("❌ No JSON data")
+            return jsonify({'error': 'No JSON data provided'}), 400
+        
         message = data.get('message', '').strip()
         thread_id = data.get('thread_id', str(uuid.uuid4()))
+        
+        print(f"📝 Message: {message}")
+        print(f"🧵 Thread: {thread_id}")
         
         if not message:
             return jsonify({'error': 'Message is required'}), 400
@@ -109,19 +122,17 @@ def chat():
         # Create config for thread persistence
         config = {'configurable': {'thread_id': thread_id}}
         
-        # Invoke chatbot with message
-        try:
-            from langchain_core.messages import HumanMessage
-            response = chatbot.invoke(
-                {'messages': [HumanMessage(content=message)]},
-                config=config
-            )
-        except:
-            # Fallback for different message formats
-            response = chatbot.invoke(
-                {'messages': [{'role': 'user', 'content': message}]},
-                config=config
-            )
+        print(f"🤔 Invoking chatbot...")
+        from langchain_core.messages import HumanMessage
+        
+        response = chatbot.invoke(
+            {'messages': [HumanMessage(content=message)]},
+            config=config
+        )
+        
+        print(f"✅ Got response from chatbot")
+        print(f"Response type: {type(response)}")
+        print(f"Response keys: {response.keys() if isinstance(response, dict) else 'N/A'}")
         
         # Extract assistant message
         result_text = "I received your message but couldn't generate a response."
@@ -136,6 +147,11 @@ def chat():
                     result_text = last_msg.content
                 elif isinstance(last_msg, dict) and 'content' in last_msg:
                     result_text = last_msg['content']
+                
+                print(f"✅ Extracted response: {str(result_text)[:100]}...")
+        
+        print(f"✅ Returning response")
+        print("=" * 60)
         
         return jsonify({
             'success': True,
@@ -145,9 +161,11 @@ def chat():
         }), 200
         
     except Exception as e:
+        print(f"❌ ERROR in chat endpoint: {str(e)}")
         import traceback
         traceback.print_exc()
-        return jsonify({'error': str(e)}), 500
+        print("=" * 60)
+        return jsonify({'error': f'Error: {str(e)}'}), 500
 
 
 @app.route('/api/threads', methods=['GET'])
@@ -382,10 +400,13 @@ def internal_error(error):
 
 
 if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
+    
     print("\n" + "="*60)
     print("🚀 LangGraph PDF Chatbot - HTML/Tailwind Frontend")
     print("="*60)
-    print("🌐 Web URL: http://localhost:5000")
-    print("📍 API URL: http://localhost:5000/api")
+    print(f"🌐 Web URL: http://0.0.0.0:{port}")
+    print(f"📍 API URL: http://0.0.0.0:{port}/api")
     print("="*60 + "\n")
-    app.run(debug=True, host='0.0.0.0', port=5000, use_reloader=True)
+    
+    app.run(debug=False, host='0.0.0.0', port=port, use_reloader=False)

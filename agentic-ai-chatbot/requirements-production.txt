@@ -8,8 +8,9 @@ python-dotenv==1.0.0
 
 # LangGraph & LangChain
 langchain==0.2.1
+langchain-core==0.2.38
+langchain-community==0.2.0
 langgraph==0.2.28
-langgraph-checkpoint-postgres==0.1.0  # Optional: for PostgreSQL persistence
 
 # LLM & Embeddings
 langchain-google-genai==2.0.0
@@ -17,17 +18,27 @@ google-generativeai==0.3.0
 
 # Vector Search
 faiss-cpu==1.14.2
-# Or for GPU: faiss-gpu==1.14.2
 
 # Document Processing
-pypdf==4.0.0
+pypdf>=4.0.0
 python-multipart==0.0.6
+
+# Tools & Utilities
+python-dotenv
+aiohttp
+pydantic>=2.0.0
+requests
+duckduckgo-search
+ddgs
+aiosqlite
 
 # Production Server
 gunicorn==21.2.0
 gevent==23.9.1
 
-# Database (Optional - for production persistence)
+# Security & WSGI
+Werkzeug>=2.3.0
+
 sqlalchemy==2.0.20
 psycopg2-binary==2.9.9  # PostgreSQL adapter
 

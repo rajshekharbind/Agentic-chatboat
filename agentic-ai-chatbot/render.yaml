@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: langgraph-pdf-chatbot
+    runtime: python
+    pythonVersion: 3.11
+    plan: free  # Change to pro for better performance
+    buildCommand: pip install -r requirements-production.txt
+    startCommand: gunicorn -w 4 -b 0.0.0.0:$PORT "frontend.app:app"
+    
+    # Environment Variables
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11"
+      - key: GEMINI_API_KEY
+        sync: false  # Add your API key in Render dashboard
+    
+    # File uploads
+    staticPublicPath: /frontend/static
+    
+    # Health Check
+    healthCheckPath: /api/health
+    healthCheckInterval: 30  # seconds
+    
+    # Build settings
+    preDeployCommand: |
+      mkdir -p frontend/data/uploads
