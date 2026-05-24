@@ -35,15 +35,16 @@ load_dotenv(CONFIG_FILE)
 gemini_api_key = os.getenv('GEMINI_API_KEY')
 
 if not gemini_api_key:
-    raise ValueError(
-        "\n❌ GEMINI_API_KEY not found!\n"
-        "Please set it in one of these ways:\n"
+    logger.warning(
+        "⚠️ GEMINI_API_KEY not found in environment!\n"
+        "Chat will fail until you set it in one of these ways:\n"
         "1. Create a .env file with: GEMINI_API_KEY=your_key\n"
         "2. Set environment variable: export GEMINI_API_KEY=your_key\n"
-        "3. Get your key from: https://aistudio.google.com/app/apikey"
+        "3. In Render: Add GEMINI_API_KEY to Environment Variables\n"
+        "4. Get your key from: https://aistudio.google.com/app/apikey"
     )
-
-logger.info("✅ Gemini API Key loaded successfully")
+else:
+    logger.info("✅ Gemini API Key loaded successfully")
 
 # ============================================
 # INITIALIZE GEMINI LLM & EMBEDDINGS
