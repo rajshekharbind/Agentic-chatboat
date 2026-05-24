@@ -49,24 +49,33 @@ else:
 # ============================================
 # INITIALIZE GEMINI LLM & EMBEDDINGS
 # ============================================
-try:
-    llm = ChatGoogleGenerativeAI(
-        model="gemini-2.5-flash",
-        api_key=gemini_api_key,
-        temperature=0.7,
-        max_tokens=1024
-    )
-    logger.info("✅ Gemini LLM initialized successfully")
-except Exception as e:
-    logger.error(f"❌ Failed to initialize LLM: {e}")
-    raise
+llm = None
+embeddings = None
 
-# Using Google Generative AI embeddings
-embeddings = GoogleGenerativeAIEmbeddings(
-    model="models/embedding-001",
-    google_api_key=gemini_api_key
-)
-logger.info("✅ Embeddings initialized successfully")
+if gemini_api_key:
+    try:
+        llm = ChatGoogleGenerativeAI(
+            model="gemini-2.5-flash",
+            api_key=gemini_api_key,
+            temperature=0.7,
+            max_tokens=1024
+        )
+        logger.info("✅ Gemini LLM initialized successfully")
+    except Exception as e:
+        logger.error(f"❌ Failed to initialize LLM: {e}")
+        llm = None
+
+    try:
+        embeddings = GoogleGenerativeAIEmbeddings(
+            model="models/embedding-001",
+            google_api_key=gemini_api_key
+        )
+        logger.info("✅ Embeddings initialized successfully")
+    except Exception as e:
+        logger.error(f"❌ Failed to initialize Embeddings: {e}")
+        embeddings = None
+else:
+    logger.warning("⚠️ Skipping LLM/Embeddings initialization - API key not set")
 
 # ============================================
 # PDF RETRIEVER STORE (per thread)
@@ -206,7 +215,7 @@ def get_stock_price(symbol: str) -> dict:
 
 
 tools = [search_tool, get_stock_price, calculator, rag_tool]
-llm_with_tools = llm.bind_tools(tools)
+llm_with_tools = llm.bind_tools(tools) if llm else None
 
 # ============================================
 # STATE DEFINITION
@@ -230,6 +239,11 @@ def chat_node(state: ChatState, config=None) -> dict:
         Updated state with AI response
     """
     try:
+        if not llm_with_tools:
+            error_msg = "❌ API Key not configured. Please set GEMINI_API_KEY environment variable."
+            logger.error(error_msg)
+            return {"messages": [AIMessage(content=error_msg)]}
+        
         # Extract thread_id for RAG tool context
         thread_id = None
         if config and isinstance(config, dict):
